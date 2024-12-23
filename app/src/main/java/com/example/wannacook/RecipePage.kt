@@ -3,6 +3,7 @@ package com.example.wannacook
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -159,6 +160,7 @@ fun RecipePage(navController: NavController){
                                     .fillMaxWidth()
                                     .clip(shape = RoundedCornerShape(10))
                                     .size(width = screenWidth, height = 0.25 * screenHeight)
+                                    .clickable { navController.navigate("recipeDetailPage/${recipe.id}")}
                             ) {
                                 AsyncImage(
                                     model = recipe.images[1], // Assuming this is your Firebase URL
@@ -212,21 +214,13 @@ fun RecipePage(navController: NavController){
                                             fontFamily = latoFontFamily,
                                             fontWeight = FontWeight.Bold
                                         )
-                                        Text(
-                                            modifier = Modifier.padding(end = 0.3 * screenWidth),
-                                            text = "By Chef Amogh",
-                                            fontFamily = latoFontFamily,
-                                            color = Color.White,
-                                            fontSize = 14.sp,
-                                            maxLines = 2,
-                                        )
                                     }
                                     FloatingActionButton(
                                         modifier = Modifier
                                             .clip(shape = RoundedCornerShape(50))
                                             .size(width = 120.dp, height = 35.dp),
                                         containerColor = Color.White,
-                                        onClick = { /*TODO*/ },
+                                        onClick = { navController.navigate("recipeDetailPage/${recipe.id}") },
                                     ) {
                                         Text(
                                             text = "Explore Now",

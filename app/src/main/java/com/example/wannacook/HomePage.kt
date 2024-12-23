@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -411,6 +412,8 @@ fun HomePage(navController: NavController) {
                                     modifier = Modifier
                                         .clip(shape = RoundedCornerShape(10))
                                         .height(0.42 * screenHeight)
+                                        .clickable { navController.navigate("recipeDetailPage/${recipe.id}")
+                                        }
                                 ){
                                     Log.d("##Recipe", recipe.images[0])
                                     AsyncImage(

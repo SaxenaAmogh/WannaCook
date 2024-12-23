@@ -23,15 +23,19 @@ class MainViewModel : ViewModel() {
 
         recipesRef.get().addOnSuccessListener { querySnapshot ->
             val fetchedRecipes = querySnapshot.documents.mapNotNull { document ->
+                val description = document.get("description") as? String ?: "Unknown"
+                val difficulty = document.get("difficulty") as? String ?: "Unknown"
                 val id = (document.get("id") as? Long)?.toInt() ?: return@mapNotNull null
                 val images = document.get("images") as? List<String> ?: emptyList()
                 val ingredients = document.get("ingredients") as? List<String> ?: emptyList()
                 val likes = (document.get("likes") as? Long)?.toInt() ?: 0
                 val name = document.get("name") as? String ?: "Unknown"
+                val quantity = document.get("quantity") as? List<String> ?: emptyList()
                 val recipe = document.get("recipe") as? List<String> ?: emptyList()
+                val time = (document.get("time") as? Long)?.toInt() ?: 0
                 val type = document.get("type") as? String ?: "Unknown"
 
-                Recipe(id, images, ingredients, likes, name, recipe, type)
+                Recipe(description, difficulty, id, images, ingredients, likes, name, quantity, recipe, time, type)
             }
             _recipes.value = fetchedRecipes
             _isLoading.value = false

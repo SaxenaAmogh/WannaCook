@@ -10,20 +10,28 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.wannacook.ui.theme.WannaCookTheme
 
 data class Recipe(
+    val description: String,
+    val difficulty: String,
     val id: Int,
     val images: List<String> = emptyList(),
     val ingredients: List<String> = emptyList(),
     val likes: Int = 0,
     val name: String,
+    val quantity: List<String> = emptyList(),
     val recipe: List<String> = emptyList(),
+    val time: Int,
     val type : String,
 )
 
@@ -32,14 +40,13 @@ class HomeActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         setContent {
             val viewModel: MainViewModel = viewModel()
 
             WannaCookTheme {
-                val recipes by viewModel.recipes
-                val isLoading by viewModel.isLoading
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -60,6 +67,18 @@ fun NavigateHome(){
         }
         composable("recipePage") {
             RecipePage(navController)
+        }
+        composable(
+            "recipeDetailPage/{selectedIndex}",
+            arguments = listOf(navArgument("selectedIndex") {
+                type = NavType.IntType
+                defaultValue = 1 // Default value in case none is passed
+            })
+        ) { backStackEntry ->
+            val selectedIndex =
+                backStackEntry.arguments?.getInt("selectedIndex") ?: 1
+            RecipeDetailPage(navController, selectedIndex)
+
         }
     }
 }
