@@ -81,6 +81,7 @@ fun RecipePage(navController: NavController){
                             start = 0.035 * screenWidth,
                             end = 0.035 * screenWidth,
                         )
+                        .verticalScroll(rememberScrollState())
                 ) {
                     Row(
                         modifier = Modifier
@@ -102,7 +103,7 @@ fun RecipePage(navController: NavController){
                         }
                         Text(
                             fontSize = 24.sp,
-                            text = "WannaCook",
+                            text = "WannaCook?!",
                             fontFamily = latoFontFamily
                         )
                         FloatingActionButton(
@@ -119,9 +120,7 @@ fun RecipePage(navController: NavController){
                         }
                     }
                     Spacer(modifier = Modifier.size(0.015 * screenHeight))
-                    Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState())
-                    ) {
+                    Column{
                         OutlinedTextField(
                             colors = TextFieldDefaults.outlinedTextFieldColors(
                                 focusedBorderColor = Color.Transparent,
@@ -224,6 +223,7 @@ fun RecipePage(navController: NavController){
                                     ) {
                                         Text(
                                             text = "Explore Now",
+                                            color = Color.Black,
                                             fontFamily = latoFontFamily,
                                         )
                                     }

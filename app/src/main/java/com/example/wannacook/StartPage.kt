@@ -47,7 +47,7 @@ fun StartPage(navController: NavController) {
     Scaffold(
         content = { innerPadding ->
             Column(modifier = Modifier
-                .padding(innerPadding)
+                .padding()
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
@@ -64,6 +64,7 @@ fun StartPage(navController: NavController) {
                 ){
                     Image(
                         modifier = Modifier
+                            .padding(top = innerPadding.calculateTopPadding())
                             .size(1.1 * screenWidth)
                             .offset(x = (-50).dp),
                         painter = painterResource(id = R.drawable.mainpage),
@@ -71,7 +72,9 @@ fun StartPage(navController: NavController) {
                         contentDescription = "")
 //                    Spacer(modifier = Modifier.size(0.05 * screenHeight))
                     Column(
-                        modifier = Modifier.padding(start = 0.05 * screenWidth, end = 0.05 * screenWidth),
+                        modifier = Modifier.padding(
+                            start = 0.05 * screenWidth,
+                            end = 0.05 * screenWidth),
                     ) {
                         Text(
                             text = "Cooking",
@@ -122,9 +125,9 @@ fun StartPage(navController: NavController) {
                                 .fillMaxWidth()
                                 .clip(shape = RoundedCornerShape(50)),
                             onClick = {
-                                val intent = Intent(activity, HomeActivity::class.java)
-                                context.startActivity(intent)
-                                //navController.navigate("homePage")
+//                                val intent = Intent(activity, HomeActivity::class.java)
+//                                context.startActivity(intent)
+                                navController.navigate("SignupPage")
                             },
                             containerColor = Color(0xFF1B1B1B),
                         ){

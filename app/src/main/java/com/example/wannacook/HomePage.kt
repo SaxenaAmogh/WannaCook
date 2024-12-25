@@ -1,6 +1,9 @@
 package com.example.wannacook
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,24 +20,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,25 +58,28 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.compose.rememberConstraintsSizeResolver
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.example.wannacook.ui.theme.latoFontFamily
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun HomePage(navController: NavController) {
 
     val viewModel: MainViewModel = viewModel()
     val recipes by viewModel.recipes
     val context = LocalContext.current
+    val activity = context as ComponentActivity
+    val updatedRecipe = remember { mutableStateOf(mutableListOf<Recipe>()) }
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     var searchItem by remember{ mutableStateOf("") }
+    var type by remember{ mutableStateOf("Breakfast") }
+    val userPrefManager = UserManager(context)
+
+    fun filterRecipesByType(selectedType: String) {
+        updatedRecipe.value = recipes.filter { it.type == selectedType }.toMutableList()
+    }
+    filterRecipesByType(type)
 
     Scaffold(
         content = { innerPadding ->
@@ -94,6 +95,7 @@ fun HomePage(navController: NavController) {
                             start = 0.035 * screenWidth,
                             end = 0.035 * screenWidth,
                         )
+                        .verticalScroll(rememberScrollState())
                 ){
                     Row(
                         modifier = Modifier
@@ -115,14 +117,19 @@ fun HomePage(navController: NavController) {
                         }
                         Text(
                             fontSize = 24.sp,
-                            text = "WannaCook",
+                            text = "WannaCook?!",
                             fontFamily = latoFontFamily
                             )
                         FloatingActionButton(
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(50))
                                 .size(50.dp),
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                val intent = Intent(context, MainActivity::class.java)
+                                context.startActivity(intent)
+                                userPrefManager.clearUserInfo()
+                                activity.finish()
+                                      },
                             containerColor = Color(0xFFF3F3F3),
                         ){
                             Icon(
@@ -132,9 +139,7 @@ fun HomePage(navController: NavController) {
                         }
                     }
                     Spacer(modifier = Modifier.size(0.03 * screenHeight))
-                    Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState())
-                    ){
+                    Column{
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -194,48 +199,19 @@ fun HomePage(navController: NavController) {
                                 ){
                                     Text(
                                         text = "Explore Now",
+                                        color = Color.Black,
                                         fontFamily = latoFontFamily,)
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier.size(0.03 * screenHeight))
-                        OutlinedTextField(
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                cursorColor = Color(0xFF9E9E9E),
-                                containerColor = Color(0xFFF5F5F5),
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(shape = RoundedCornerShape(50))
-                                .border(
-                                    width = 1.dp,
-                                    color = Color(0xFFFFFFFF),
-                                    shape = RoundedCornerShape(50)
-                                ),
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(22.dp),
-                                    painter = painterResource(id = R.drawable.search),
-                                    contentDescription = "search")
-                            },
-                            value = searchItem,
-                            onValueChange = {searchItem = it},
-                            placeholder = {
-                                Text(
-                                    color = Color(0xFF9E9E9E),
-                                    text = "Search for recipes",
-                                    fontFamily = latoFontFamily,
-                                )
-                            }
-                        )
                         Spacer(modifier = Modifier.size(0.03 * screenHeight))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            val color by remember { mutableStateOf(Color(0xFFF5F5F5)) }
+                            val selectedColor by remember { mutableStateOf(Color(0xBE249C09)) }
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
@@ -243,7 +219,7 @@ fun HomePage(navController: NavController) {
                                     modifier = Modifier
                                         .size(60.dp)
                                         .background(
-                                            Color(0xFFF5F5F5),
+                                            if (type == "Breakfast") selectedColor else color,
                                             shape = RoundedCornerShape(50)
                                         )
                                         .clip(
@@ -251,9 +227,13 @@ fun HomePage(navController: NavController) {
                                         )
                                         .border(
                                             width = 1.dp,
-                                            color = Color(0xFFF5F5F5),
+                                            color = if (type == "Breakfast") selectedColor else color,
                                             shape = RoundedCornerShape(50),
-                                        ),
+                                        )
+                                        .clickable{
+                                            type = "Breakfast"
+                                            filterRecipesByType(type)
+                                        },
                                     contentAlignment = Alignment.Center
                                 ){
                                     Image(
@@ -276,7 +256,7 @@ fun HomePage(navController: NavController) {
                                     modifier = Modifier
                                         .size(60.dp)
                                         .background(
-                                            Color(0xFFF5F5F5),
+                                            if (type == "Lunch") selectedColor else color,
                                             shape = RoundedCornerShape(50)
                                         )
                                         .clip(
@@ -284,9 +264,13 @@ fun HomePage(navController: NavController) {
                                         )
                                         .border(
                                             width = 1.dp,
-                                            color = Color(0xFFF5F5F5),
+                                            color = if (type == "Lunch") selectedColor else color,
                                             shape = RoundedCornerShape(50),
-                                        ),
+                                        )
+                                        .clickable {
+                                            type = "Lunch"
+                                            filterRecipesByType(type)
+                                                   },
                                     contentAlignment = Alignment.Center
                                 ){
                                     Image(
@@ -309,7 +293,7 @@ fun HomePage(navController: NavController) {
                                     modifier = Modifier
                                         .size(60.dp)
                                         .background(
-                                            Color(0xFFF5F5F5),
+                                            if (type == "FastFood") selectedColor else color,
                                             shape = RoundedCornerShape(50)
                                         )
                                         .clip(
@@ -317,9 +301,13 @@ fun HomePage(navController: NavController) {
                                         )
                                         .border(
                                             width = 1.dp,
-                                            color = Color(0xFFF5F5F5),
+                                            color = if (type == "FastFood") selectedColor else color,
                                             shape = RoundedCornerShape(50),
-                                        ),
+                                        )
+                                        .clickable {
+                                            type = "FastFood"
+                                            filterRecipesByType(type)
+                                                   },
                                     contentAlignment = Alignment.Center
                                 ){
                                     Image(
@@ -342,7 +330,7 @@ fun HomePage(navController: NavController) {
                                     modifier = Modifier
                                         .size(60.dp)
                                         .background(
-                                            Color(0xFFF5F5F5),
+                                            if (type == "Dinner") selectedColor else color,
                                             shape = RoundedCornerShape(50)
                                         )
                                         .clip(
@@ -350,9 +338,13 @@ fun HomePage(navController: NavController) {
                                         )
                                         .border(
                                             width = 1.dp,
-                                            color = Color(0xFFF5F5F5),
+                                            color = if (type == "Dinner") selectedColor else color,
                                             shape = RoundedCornerShape(50),
-                                        ),
+                                        )
+                                        .clickable {
+                                            type = "Dinner"
+                                            filterRecipesByType(type)
+                                                   },
                                     contentAlignment = Alignment.Center
                                 ){
                                     Image(
@@ -375,7 +367,7 @@ fun HomePage(navController: NavController) {
                                     modifier = Modifier
                                         .size(60.dp)
                                         .background(
-                                            Color(0xFFF5F5F5),
+                                            if (type == "Desert") selectedColor else color,
                                             shape = RoundedCornerShape(50)
                                         )
                                         .clip(
@@ -383,9 +375,13 @@ fun HomePage(navController: NavController) {
                                         )
                                         .border(
                                             width = 1.dp,
-                                            color = Color(0xFFF5F5F5),
+                                            color = if (type == "Desert") selectedColor else color,
                                             shape = RoundedCornerShape(50),
-                                        ),
+                                        )
+                                        .clickable {
+                                            type = "Desert"
+                                            filterRecipesByType(type)
+                                                   },
                                     contentAlignment = Alignment.Center
                                 ){
                                     Image(
@@ -403,93 +399,262 @@ fun HomePage(navController: NavController) {
                             }
                         }
                         Spacer(modifier = Modifier.size(0.03 * screenHeight))
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .horizontalScroll(rememberScrollState())
                         ) {
-                            for (recipe in recipes){
-                                Box(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(10))
-                                        .height(0.42 * screenHeight)
-                                        .clickable { navController.navigate("recipeDetailPage/${recipe.id}")
-                                        }
-                                ){
-                                    Log.d("##Recipe", recipe.images[0])
-                                    AsyncImage(
-                                        model = recipe.images[0], // Assuming this is your Firebase URL
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(
-                                                width = 0.64 * screenWidth,
-                                                height = 0.42 * screenHeight
-                                            ),
-                                        contentScale = ContentScale.Crop,
-                                        error = painterResource(id = R.drawable.home), // Add an error placeholder
-                                        placeholder = painterResource(id = R.drawable.search) // Add a loading placeholder
-                                    )
+                            val range:Int = updatedRecipe.value.size
+                            for (x in 0 until range step 2){
+                                val recipe1 = updatedRecipe.value[x]
+                                Row(){
                                     Box(
                                         modifier = Modifier
-                                            .matchParentSize()
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    colors = listOf(
-                                                        Color.Black.copy(alpha = 0.5f), // Left edge
-                                                        Color.Transparent,             // Center
-                                                        Color.Black.copy(alpha = 0.8f) // Right edge
-                                                    )
-                                                )
-                                            )
-                                    )
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxHeight()
-                                            .padding(
-                                                start = 0.05 * screenWidth,
-                                                top = 0.05 * screenWidth,
-                                                bottom = 0.08 * screenWidth
-                                            ),
-                                        verticalArrangement = Arrangement.SpaceBetween
-                                    ) {
+                                            .clip(shape = RoundedCornerShape(10))
+                                            .height(0.32 * screenHeight)
+                                            .width(0.45 * screenWidth)
+                                            .clickable {
+                                                navController.navigate("recipeDetailPage/${recipe1.id}")
+                                            }
+                                    ){
+                                        Log.d("##Recipe", recipe1.images[0])
+                                        AsyncImage(
+                                            model = recipe1.images[0], // Assuming this is your Firebase URL
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(
+                                                    width = 0.64 * screenWidth,
+                                                    height = 0.42 * screenHeight
+                                                ),
+                                            contentScale = ContentScale.Crop,
+                                        )
                                         Box(
                                             modifier = Modifier
-                                                .clip(shape = RoundedCornerShape(50))
-                                                .size(width = 120.dp, height = 38.dp)
+                                                .matchParentSize()
                                                 .background(
-                                                    color = Color(0x7EFFFFFF)
-                                                ),
-                                            contentAlignment = Alignment.Center
-                                        ){
-                                            Text(
-                                                text = recipe.type,
-                                                color = Color.Black,
-                                                fontFamily = latoFontFamily,
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 18.sp,)
-                                        }
+                                                    Brush.verticalGradient(
+                                                        colors = listOf(
+                                                            Color.Black.copy(alpha = 0.5f), // Left edge
+                                                            Color.Transparent,             // Center
+                                                            Color.Black.copy(alpha = 0.8f) // Right edge
+                                                        )
+                                                    )
+                                                )
+                                        )
                                         Column(
-                                            modifier = Modifier.fillMaxWidth()
-                                        ){
-                                            Text(
-                                                text = recipe.name,
-                                                color = Color.White,
-                                                fontFamily = latoFontFamily,
-                                                fontSize = 22.sp,
-                                            )
-                                            HorizontalDivider(
+                                            modifier = Modifier
+                                                .fillMaxHeight()
+                                                .padding(
+                                                    start = 0.03 * screenWidth,
+                                                    end = 0.03 * screenWidth,
+                                                    top = 0.05 * screenWidth,
+                                                    bottom = 0.04 * screenWidth
+                                                ),
+                                            verticalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Box(
                                                 modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .size(height = 0.dp, width = 0.52 * screenWidth),
-                                                color = Color(0x4BE0E0E0),
-                                                thickness = 2.dp
+                                                    .clip(shape = RoundedCornerShape(50))
+                                                    .size(width = 100.dp, height = 35.dp)
+                                                    .background(
+                                                        color = Color(0x7EFFFFFF)
+                                                    ),
+                                                contentAlignment = Alignment.Center
+                                            ){
+                                                Text(
+                                                    text = recipe1.type,
+                                                    color = Color.Black,
+                                                    fontFamily = latoFontFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 16.sp,)
+                                            }
+                                            Column(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ){
+                                                Text(
+                                                    text = recipe1.name,
+                                                    color = Color.White,
+                                                    fontFamily = latoFontFamily,
+                                                    fontSize = 20.sp,
+                                                )
+                                                HorizontalDivider(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth(),
+                                                    color = Color(0x4BE0E0E0),
+                                                    thickness = 2.dp
+                                                )
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.Start,
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Image(
+                                                            modifier = Modifier.size(16.dp),
+                                                            painter = painterResource(id = R.drawable.clock),
+                                                            contentDescription = "time"
+                                                        )
+                                                        Spacer(modifier = Modifier.width(5.dp))
+                                                        Text(
+                                                            text = recipe1.time.toString() + " mins",
+                                                            color = Color.White,
+                                                            fontSize = 14.sp,
+                                                            fontFamily = latoFontFamily,
+                                                            fontWeight = FontWeight.Normal,
+                                                        )
+                                                    }
+                                                    Spacer(modifier = Modifier.width(15.dp))
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Icon(
+                                                            modifier = Modifier.size(18.dp),
+                                                            painter = painterResource(id = R.drawable.heart),
+                                                            contentDescription = "likes",
+                                                            tint = Color.Red
+                                                        )
+                                                        Spacer(modifier = Modifier.width(5.dp))
+                                                        Text(
+                                                            text = recipe1.likes.toString() ?: "",
+                                                            color = Color.White,
+                                                            fontSize = 14.sp,
+                                                            fontFamily = latoFontFamily,
+                                                            fontWeight = FontWeight.Normal,
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.size(0.03 * screenWidth))
+                                    if (x+1 < updatedRecipe.value.size) {
+                                        val recipe2 = updatedRecipe.value[x + 1]
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(shape = RoundedCornerShape(10))
+                                                .height(0.32 * screenHeight)
+                                                .width(0.45 * screenWidth)
+                                                .clickable {
+                                                    navController.navigate("recipeDetailPage/${recipe2.id}")
+                                                }
+                                        ) {
+                                            Log.d("##Recipe", recipe2.images[0])
+                                            AsyncImage(
+                                                model = recipe2.images[0], // Assuming this is your Firebase URL
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .size(
+                                                        width = 0.64 * screenWidth,
+                                                        height = 0.42 * screenHeight
+                                                    ),
+                                                contentScale = ContentScale.Crop,
                                             )
+                                            Box(
+                                                modifier = Modifier
+                                                    .matchParentSize()
+                                                    .background(
+                                                        Brush.verticalGradient(
+                                                            colors = listOf(
+                                                                Color.Black.copy(alpha = 0.5f), // Left edge
+                                                                Color.Transparent,             // Center
+                                                                Color.Black.copy(alpha = 0.8f) // Right edge
+                                                            )
+                                                        )
+                                                    )
+                                            )
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxHeight()
+                                                    .padding(
+                                                        start = 0.03 * screenWidth,
+                                                        end = 0.03 * screenWidth,
+                                                        top = 0.05 * screenWidth,
+                                                        bottom = 0.04 * screenWidth
+                                                    ),
+                                                verticalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .clip(shape = RoundedCornerShape(50))
+                                                        .size(width = 100.dp, height = 35.dp)
+                                                        .background(
+                                                            color = Color(0x7EFFFFFF)
+                                                        ),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(
+                                                        text = recipe2.type,
+                                                        color = Color.Black,
+                                                        fontFamily = latoFontFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 16.sp,
+                                                    )
+                                                }
+                                                Column(
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        text = recipe2.name,
+                                                        color = Color.White,
+                                                        fontFamily = latoFontFamily,
+                                                        fontSize = 20.sp,
+                                                    )
+                                                    HorizontalDivider(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth(),
+                                                        color = Color(0x4BE0E0E0),
+                                                        thickness = 2.dp
+                                                    )
+                                                    Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        horizontalArrangement = Arrangement.Start,
+                                                    ) {
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Image(
+                                                                modifier = Modifier.size(16.dp),
+                                                                painter = painterResource(id = R.drawable.clock),
+                                                                contentDescription = "time"
+                                                            )
+                                                            Spacer(modifier = Modifier.width(5.dp))
+                                                            Text(
+                                                                text = recipe1.time.toString() + " mins",
+                                                                color = Color.White,
+                                                                fontSize = 14.sp,
+                                                                fontFamily = latoFontFamily,
+                                                                fontWeight = FontWeight.Normal,
+                                                            )
+                                                        }
+                                                        Spacer(modifier = Modifier.width(15.dp))
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Icon(
+                                                                modifier = Modifier.size(18.dp),
+                                                                painter = painterResource(id = R.drawable.heart),
+                                                                contentDescription = "likes",
+                                                                tint = Color.Red
+                                                            )
+                                                            Spacer(modifier = Modifier.width(5.dp))
+                                                            Text(
+                                                                text = recipe1.likes.toString() ?: "",
+                                                                color = Color.White,
+                                                                fontSize = 14.sp,
+                                                                fontFamily = latoFontFamily,
+                                                                fontWeight = FontWeight.Normal,
+                                                            )
+                                                        }
+                                                    }
+                                                }
+
+                                            }
                                         }
                                     }
                                 }
-                                Spacer(modifier = Modifier.size(0.03 * screenWidth))
+                                Spacer(modifier = Modifier.size(0.03 * screenHeight))
                             }
                         }
-                        Spacer(modifier = Modifier.size(0.03 * screenHeight))
                     }
                 }
             }

@@ -19,13 +19,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.example.wannacook.R
 
 private val DarkColors = darkColorScheme(
-    primary = Yellow80,
+    primary = BlackBack,
     background = Color.Transparent,
     surface = Color.Transparent,
 )
 
 private val LightColors = lightColorScheme(
-    primary = Yellow80,
+    primary = BlackBack,
     background = Color.Transparent,
     surface = Color.Transparent,
 )

@@ -52,6 +52,7 @@ android {
 
 dependencies {
 
+    implementation(libs.firebase.auth)
     implementation(libs.coil.network.okhttp)
     implementation(libs.coil3.coil.compose)
     implementation(libs.firebase.analytics)

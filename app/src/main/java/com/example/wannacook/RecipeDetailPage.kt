@@ -166,8 +166,7 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                         Spacer(modifier = Modifier.height(0.005 * screenHeight))
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 0.15 * screenWidth),
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Row(
@@ -213,6 +212,23 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     text = recipe?.difficulty ?: "",
+                                    fontSize = 16.sp,
+                                    fontFamily = latoFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                )
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    painter = painterResource(id = R.drawable.heart),
+                                    contentDescription = "likes",
+                                    tint = Color.Red
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = recipe?.likes.toString() ?: "",
                                     fontSize = 16.sp,
                                     fontFamily = latoFontFamily,
                                     fontWeight = FontWeight.Normal,

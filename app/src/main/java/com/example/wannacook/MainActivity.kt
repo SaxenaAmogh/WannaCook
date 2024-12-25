@@ -18,10 +18,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.wannacook.ui.theme.WannaCookTheme
 
+private lateinit var userPrefManager: UserManager
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        userPrefManager = UserManager(this)
         setContent {
             WannaCookTheme {
                 Surface(
@@ -48,9 +51,9 @@ fun NavigateMain() {
         composable("recipePage") {
             RecipePage(navController)
         }
-//        composable("SignupPage"){
-//            SignupPageMain(navController)
-//        }
+        composable("SignupPage"){
+            SignupPageMain(navController)
+        }
 //        composable("LoginPage"){
 //            LoginPageMain(navController)
 //        }
