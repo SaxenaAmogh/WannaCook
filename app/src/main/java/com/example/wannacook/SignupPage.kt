@@ -233,8 +233,9 @@ fun Login(){
                             if (documentSnapshot.exists()) {
                                 // Fetch the username field from the document
                                 val username = documentSnapshot.getString("username")
+                                val liked = documentSnapshot.get("liked") as List<Int>
                                 if (username != null) {
-                                    userPrefManager.saveUserInfo(username, email)
+                                    userPrefManager.saveUserInfo(username, email, liked)
                                 }
                             }
                         }
@@ -452,13 +453,14 @@ fun Register(){
             "username" to username,
             "email" to email,
             "password" to password,
-            "liked" to listOf<String>(),
+            "liked" to listOf<Int>(),
         )
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    userPrefManager.saveUserInfo(username, email)
+                    val liked = listOf<Int>()
+                    userPrefManager.saveUserInfo(username, email, liked)
                     val intent = Intent(context, HomeActivity::class.java)
                     context.startActivity(intent)
                     activity.finish()
@@ -472,7 +474,6 @@ fun Register(){
             .addOnFailureListener { e ->
                 Log.e("Firestore", "Error adding user: ", e)
             }
-        userPrefManager.saveUserInfo("exampleUserId123", "user@example.com")
     }
 
     Column(

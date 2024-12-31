@@ -31,6 +31,7 @@ data class Recipe(
     val name: String,
     val quantity: List<String> = emptyList(),
     val recipe: List<String> = emptyList(),
+    val rid: String,
     val time: Int,
     val type : String,
 )

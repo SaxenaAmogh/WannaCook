@@ -406,6 +406,7 @@ fun HomePage(navController: NavController) {
                             val range:Int = updatedRecipe.value.size
                             for (x in 0 until range step 2){
                                 val recipe1 = updatedRecipe.value[x]
+                                Log.e("###Recipe", recipe1.toString())
                                 Row(){
                                     Box(
                                         modifier = Modifier
@@ -619,7 +620,7 @@ fun HomePage(navController: NavController) {
                                                             )
                                                             Spacer(modifier = Modifier.width(5.dp))
                                                             Text(
-                                                                text = recipe1.time.toString() + " mins",
+                                                                text = recipe2.time.toString() + " mins",
                                                                 color = Color.White,
                                                                 fontSize = 14.sp,
                                                                 fontFamily = latoFontFamily,
@@ -638,7 +639,7 @@ fun HomePage(navController: NavController) {
                                                             )
                                                             Spacer(modifier = Modifier.width(5.dp))
                                                             Text(
-                                                                text = recipe1.likes.toString() ?: "",
+                                                                text = recipe2.likes.toString() ?: "",
                                                                 color = Color.White,
                                                                 fontSize = 14.sp,
                                                                 fontFamily = latoFontFamily,

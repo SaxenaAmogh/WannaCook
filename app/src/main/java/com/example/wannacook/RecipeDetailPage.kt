@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,14 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,9 +37,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,15 +50,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.example.wannacook.ui.theme.latoFontFamily
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
 
-
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
-
+    var liked by remember { mutableStateOf(false) }
     var recipe : Recipe? = null
     val viewModel: MainViewModel = viewModel()
     val recipes by viewModel.recipes
@@ -70,6 +67,25 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
         Log.d("@@12", "Recipe: $selectedIndex")
         if (x.id == selectedIndex) {
             recipe = x
+        }
+    }
+
+    fun likeRecipe(){
+        val userPrefManager = UserManager(context)
+        val user = userPrefManager.getUserInfo()
+        val email = user["email"].toString()
+        val db = FirebaseFirestore.getInstance()
+        val recipeDocRef = recipe?.let { db.collection("recipes").document(it.rid) }
+        val userDocRef = db.collection("users").document(email)
+
+        if (liked) {
+            recipeDocRef?.update("likes", recipe?.likes?.plus(1))
+            userDocRef.update("liked", com.google.firebase.firestore.FieldValue.arrayUnion(selectedIndex))
+            userPrefManager.updateLikes(newValue = selectedIndex)
+        } else {
+            recipeDocRef?.update("likes", recipe?.likes?.minus(1))
+            userDocRef.update("liked", com.google.firebase.firestore.FieldValue.arrayRemove(selectedIndex))
+            userPrefManager.updateLikes(removeValue = selectedIndex)
         }
     }
 
@@ -132,18 +148,39 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                                     contentDescription = "menu"
                                 )
                             }
+                            val user = UserManager(context).getUserInfo()
+                            val likes = user["liked"] as List<Int>
+                            for (x in likes) {
+                                if (x == selectedIndex) {
+                                    liked = true
+                                    break
+                                }
+                            }
                             FloatingActionButton(
                                 modifier = Modifier
                                     .clip(shape = RoundedCornerShape(50))
                                     .size(50.dp),
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    liked = !liked
+                                    likeRecipe()
+                                },
                                 containerColor = Color(0xFFF3F3F3),
                             ) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(id = R.drawable.heart_na),
-                                    contentDescription = "like"
-                                )
+                                if (liked){
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(id = R.drawable.heart),
+                                        tint = Color.Red,
+                                        contentDescription = "like"
+                                    )
+                                } else {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(id = R.drawable.heart_na),
+                                        contentDescription = "like"
+                                    )
+                                }
+
                             }
                         }
                     }
@@ -350,7 +387,6 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                                 Spacer(modifier = Modifier.height(0.005 * screenHeight))
                             }
                         }
-                        //Spacer(modifier = Modifier.height(0.015 * screenHeight))
                     }
                 }
             }
