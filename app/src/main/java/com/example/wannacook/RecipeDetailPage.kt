@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -231,7 +230,7 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                                 Image(
                                     modifier = Modifier.size(20.dp),
                                     painter = painterResource(id = R.drawable.ingred),
-                                    contentDescription = "ingred"
+                                    contentDescription = "ingredients"
                                 )
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
@@ -268,7 +267,7 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                                 )
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
-                                    text = recipe?.likes.toString() ?: "",
+                                    text = recipe?.likes.toString(),
                                     fontSize = 16.sp,
                                     fontFamily = latoFontFamily,
                                     fontWeight = FontWeight.Normal,
@@ -314,7 +313,7 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                         )
                         Spacer(modifier = Modifier.height(0.005 * screenHeight))
                         Column {
-                            val ingredients:Int = recipe?.ingredients?.size?.toInt() ?: 0
+                            val ingredients:Int = recipe?.ingredients?.size ?: 0
                             for (x in 0..<ingredients) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -361,7 +360,7 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                         )
                         Spacer(modifier = Modifier.height(0.005 * screenHeight))
                         Column {
-                            val recipeS:Int = recipe?.recipe?.size?.toInt() ?: 0
+                            val recipeS:Int = recipe?.recipe?.size ?: 0
                             for (x in 0..<recipeS) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),

@@ -12,7 +12,6 @@ class MainViewModel : ViewModel() {
 
     // State to handle loading status
     private val _isLoading = mutableStateOf(true)
-    val isLoading: State<Boolean> get() = _isLoading
 
     init {
         fetchRecipes()

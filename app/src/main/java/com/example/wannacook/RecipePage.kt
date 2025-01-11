@@ -1,6 +1,5 @@
 package com.example.wannacook
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -53,7 +51,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
-import coil3.compose.rememberAsyncImagePainter
 import com.example.wannacook.ui.theme.latoFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -193,7 +190,7 @@ fun RecipePage(navController: NavController){
                                             ),
                                         verticalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Column() {
+                                        Column {
                                             Box(
                                                 modifier = Modifier
                                                     .clip(shape = RoundedCornerShape(35))
@@ -273,7 +270,7 @@ fun RecipePage(navController: NavController){
                                                 ),
                                             verticalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            Column() {
+                                            Column {
                                                 Box(
                                                     modifier = Modifier
                                                         .clip(shape = RoundedCornerShape(35))

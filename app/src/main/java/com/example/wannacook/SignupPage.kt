@@ -50,8 +50,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.wannacook.ui.theme.latoFontFamily
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -59,7 +57,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun SignupPageMain(navController: NavController) {
+fun SignupPageMain() {
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -588,5 +586,5 @@ fun Register(){
 @Preview(showBackground = true)
 @Composable
 fun SignupPagePreview() {
-    SignupPageMain(rememberNavController())
+    SignupPageMain()
 }
