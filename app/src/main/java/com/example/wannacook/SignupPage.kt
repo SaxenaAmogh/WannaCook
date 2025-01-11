@@ -465,6 +465,9 @@ fun Register(){
                     context.startActivity(intent)
                     activity.finish()
                 }
+                else {
+                    Log.e("@@Firebase", "Error creating user: ", task.exception)
+                }
             }
 
         userDocRef.set(userData)

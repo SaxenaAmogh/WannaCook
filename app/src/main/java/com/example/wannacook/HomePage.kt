@@ -66,15 +66,11 @@ fun HomePage(navController: NavController) {
 
     val viewModel: MainViewModel = viewModel()
     val recipes by viewModel.recipes
-    val context = LocalContext.current
-    val activity = context as ComponentActivity
     val updatedRecipe = remember { mutableStateOf(mutableListOf<Recipe>()) }
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
-    var searchItem by remember{ mutableStateOf("") }
     var type by remember{ mutableStateOf("Breakfast") }
-    val userPrefManager = UserManager(context)
 
     fun filterRecipesByType(selectedType: String) {
         updatedRecipe.value = recipes.filter { it.type == selectedType }.toMutableList()
@@ -124,12 +120,10 @@ fun HomePage(navController: NavController) {
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(50))
                                 .size(50.dp),
-                            onClick = {
-                                val intent = Intent(context, MainActivity::class.java)
-                                context.startActivity(intent)
-                                userPrefManager.clearUserInfo()
-                                activity.finish()
-                                      },
+                            onClick =
+                            {
+                                navController.navigate("profilePage")
+                            },
                             containerColor = Color(0xFFF3F3F3),
                         ){
                             Icon(
@@ -174,7 +168,7 @@ fun HomePage(navController: NavController) {
                                     ),
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Column(){
+                                Column{
                                     Text(
                                         text = "Making Dinner?",
                                         color = Color.White,
@@ -407,7 +401,7 @@ fun HomePage(navController: NavController) {
                             for (x in 0 until range step 2){
                                 val recipe1 = updatedRecipe.value[x]
                                 Log.e("###Recipe", recipe1.toString())
-                                Row(){
+                                Row{
                                     Box(
                                         modifier = Modifier
                                             .clip(shape = RoundedCornerShape(10))
@@ -516,7 +510,7 @@ fun HomePage(navController: NavController) {
                                                         )
                                                         Spacer(modifier = Modifier.width(5.dp))
                                                         Text(
-                                                            text = recipe1.likes.toString() ?: "",
+                                                            text = recipe1.likes.toString(),
                                                             color = Color.White,
                                                             fontSize = 14.sp,
                                                             fontFamily = latoFontFamily,
@@ -639,7 +633,7 @@ fun HomePage(navController: NavController) {
                                                             )
                                                             Spacer(modifier = Modifier.width(5.dp))
                                                             Text(
-                                                                text = recipe2.likes.toString() ?: "",
+                                                                text = recipe2.likes.toString(),
                                                                 color = Color.White,
                                                                 fontSize = 14.sp,
                                                                 fontFamily = latoFontFamily,
@@ -686,7 +680,6 @@ fun HomePage(navController: NavController) {
                                 inclusive = true
                             }
                         }
-                        //Log.e("@@@@", RecipeRepo.recipeList[1].toString())
                     }) {
                         Icon(
                             modifier = Modifier.size(30.dp),
@@ -694,14 +687,22 @@ fun HomePage(navController: NavController) {
                             tint = Color(0xFF818183),
                             contentDescription = "Recipes")
                     }
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        navController.navigate("likedPage") {
+                            popUpTo("homePage"){
+                                inclusive = true
+                            }
+                        }
+                    }) {
                         Icon(
                             modifier = Modifier.size(30.dp),
                             painter = painterResource(id = R.drawable.heart_na),
                             tint = Color(0xFF818183),
                             contentDescription = "Saved")
                     }
-                    IconButton(onClick = {}
+                    IconButton(onClick = {
+                        navController.navigate("profilePage")
+                    }
                     ) {
                         Icon(
                             modifier = Modifier.size(30.dp),

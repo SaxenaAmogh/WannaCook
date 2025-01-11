@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -140,11 +141,13 @@ fun RecipeDetailPage(navController: NavController, selectedIndex: Int){
                                 modifier = Modifier
                                     .clip(shape = RoundedCornerShape(50))
                                     .size(50.dp),
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    navController.popBackStack()
+                                },
                                 containerColor = Color(0xFFF3F3F3),
                             ) {
                                 Icon(
-                                    Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                    Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "menu"
                                 )
                             }

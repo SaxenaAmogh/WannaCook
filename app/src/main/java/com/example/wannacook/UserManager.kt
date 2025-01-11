@@ -71,16 +71,6 @@ class UserManager(context: Context) {
         )
     }
 
-    // Retrieve liked list as List<Int>
-    fun getLikedList(): List<Int> {
-        val likedJson = sharedPreferences.getString(KEY_LIKED, null)
-        return if (likedJson != null) {
-            gson.fromJson(likedJson, object : TypeToken<List<Int>>() {}.type)
-        } else {
-            emptyList()
-        }
-    }
-
     // Clear user information
     fun clearUserInfo() {
         editor.clear()

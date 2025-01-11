@@ -79,7 +79,12 @@ fun NavigateHome(){
             val selectedIndex =
                 backStackEntry.arguments?.getInt("selectedIndex") ?: 1
             RecipeDetailPage(navController, selectedIndex)
-
+        }
+        composable("profilePage") {
+            ProfilePage(navController)
+        }
+        composable("likedPage") {
+            LikedPage(navController)
         }
     }
 }
