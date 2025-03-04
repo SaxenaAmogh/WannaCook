@@ -21,9 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -116,40 +114,35 @@ fun ProfilePage(navController: NavController) {
                             end = 0.035 * screenWidth,
                         )
                 ) {
-                    Row(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
                                 top = 0.03 * screenWidth,
                             ),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                        contentAlignment = Alignment.Center
                     ) {
-                        FloatingActionButton(
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(50))
-                                .size(50.dp),
-                            onClick =
-                            {
-                                navController.popBackStack()
-                            },
-                            containerColor = Color(0xFFF3F3F3),
-                        ){
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "back")
-                        }
                         Text(
                             fontSize = 24.sp,
-                            text = "Profile",
-                            fontFamily = latoFontFamily
+                            text = "WannaCook?!",
+                            fontFamily = latoFontFamily,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                         FloatingActionButton(
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(50))
-                                .size(50.dp),
-                            onClick = {},
+                                .size(50.dp)
+                                .align(Alignment.CenterEnd),
+                            onClick =
+                            {
+                                navController.navigate("profilePage")
+                            },
                             containerColor = Color(0xFFF3F3F3),
                         ){
-                            Icon(Icons.Default.Edit, contentDescription = "back")
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(id = R.drawable.user),
+                                contentDescription = "notifications")
                         }
                     }
                     Spacer(modifier = Modifier.size(0.01 * screenHeight))

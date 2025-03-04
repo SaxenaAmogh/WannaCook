@@ -80,33 +80,25 @@ fun RecipePage(navController: NavController){
                         )
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Row(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
                                 top = 0.03 * screenWidth,
                             ),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                        contentAlignment = Alignment.Center
                     ) {
-                        FloatingActionButton(
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(50))
-                                .size(50.dp),
-                            onClick = { /*TODO*/ },
-                            containerColor = Color(0xFFF3F3F3),
-                        ){
-                            Icon(Icons.Default.Menu, contentDescription = "menu")
-                        }
                         Text(
                             fontSize = 24.sp,
                             text = "WannaCook?!",
-                            fontFamily = latoFontFamily
+                            fontFamily = latoFontFamily,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                         FloatingActionButton(
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(50))
-                                .size(50.dp),
+                                .size(50.dp)
+                                .align(Alignment.CenterEnd),
                             onClick =
                             {
                                 navController.navigate("profilePage")
